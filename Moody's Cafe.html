@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Moody's Café</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=Roboto&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Roboto', sans-serif; }
+    h1, h2 { font-family: 'Playfair Display', serif; }
+    .page { display: none; }
+    .active { display: block; animation: fadeIn 0.5s ease-in-out; }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body class="bg-white text-gray-800">
+
+  <!-- Intro Page -->
+  <section id="intro" class="page active h-screen flex flex-col justify-center items-center bg-cover bg-center text-white text-center" style="background-image: url('https://images.unsplash.com/photo-1509042239860-f550ce710b93');">
+    <div class="bg-black bg-opacity-60 p-10 rounded-xl">
+      <h1 class="text-6xl font-bold mb-4">☕ Moody's Café</h1>
+      <p class="text-xl mb-6">Start your journey with the perfect brew</p>
+      <button onclick="showPage('mood')" class="bg-yellow-300 text-black px-6 py-2 rounded-full text-lg hover:bg-yellow-400 transition">Order Now</button>
+    </div>
+  </section>
+
+  <!-- Mood Page -->
+  <section id="mood" class="page py-20 px-6 text-center">
+    <h2 class="text-4xl font-bold mb-10">How are you feeling today?</h2>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto">
+      <button onclick="selectMood('happy')" class="p-6 bg-yellow-100 rounded-xl hover:shadow-lg transition text-2xl">😊 Happy</button>
+      <button onclick="selectMood('tired')" class="p-6 bg-yellow-100 rounded-xl hover:shadow-lg transition text-2xl">😴 Tired</button>
+      <button onclick="selectMood('adventurous')" class="p-6 bg-yellow-100 rounded-xl hover:shadow-lg transition text-2xl">🌈 Adventurous</button>
+      <button onclick="selectMood('chill')" class="p-6 bg-yellow-100 rounded-xl hover:shadow-lg transition text-2xl">😌 Chill</button>
+    </div>
+  </section>
+
+  <!-- Menu Page -->
+  <section id="menu" class="page py-20 px-6">
+    <h2 class="text-4xl font-bold text-center mb-10">Choose your drink</h2>
+    <div id="menuOptions" class="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto"></div>
+  </section>
+
+  <!-- Order Summary Page -->
+  <section id="summary" class="page py-20 px-6 text-center">
+    <h2 class="text-4xl font-bold mb-6">Your Order Summary</h2>
+    <p id="orderDetails" class="text-xl mb-6"></p>
+    <button onclick="showPage('thankyou')" class="bg-green-500 text-white px-6 py-2 rounded-full hover:bg-green-600 transition">Confirm Order</button>
+  </section>
+
+  <!-- Thank You Page -->
+  <section id="thankyou" class="page h-screen flex flex-col justify-center items-center text-center bg-green-100">
+    <h2 class="text-5xl font-bold mb-4">Thank you for visiting Moody's Café!</h2>
+    <p class="text-xl mb-6">We hope to see you again soon!</p>
+    <button onclick="location.reload()" class="bg-yellow-300 px-6 py-2 rounded-full text-lg hover:bg-yellow-400 transition">Start Over</button>
+  </section>
+
+  <script>
+    const moodMenus = {
+      happy: [
+        { name: 'Vanilla Latte', price: 4, img: 'https://images.unsplash.com/photo-1541167760496-1628856ab772' },
+        { name: 'Caramel Macchiato', price: 5, img: 'https://images.unsplash.com/photo-1509042239860-f550ce710b93' }
+      ],
+      tired: [
+        { name: 'Double Espresso', price: 3, img: 'https://images.unsplash.com/photo-1552072092-7d55c0b37f14' },
+        { name: 'Strong Black Coffee', price: 2, img: 'https://images.unsplash.com/photo-1509042239860-f550ce710b93' }
+      ],
+      adventurous: [
+        { name: 'Matcha Latte', price: 4, img: 'https://images.unsplash.com/photo-1584367367093-1685d1f1e6a3' },
+        { name: 'Turmeric Chai', price: 5, img: 'https://images.unsplash.com/photo-1581404917879-99ded319632a' }
+      ],
+      chill: [
+        { name: 'Iced Mocha', price: 4, img: 'https://images.unsplash.com/photo-1559634784-ea3e1f0df7a1' },
+        { name: 'Herbal Tea', price: 3, img: 'https://images.unsplash.com/photo-1568640347023-3fbc4d0b6b38' }
+      ]
+    };
+
+    let selectedDrink = null;
+
+    function showPage(id) {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+    }
+
+    function selectMood(mood) {
+      const menuContainer = document.getElementById('menuOptions');
+      menuContainer.innerHTML = '';
+      moodMenus[mood].forEach(drink => {
+        const div = document.createElement('div');
+        div.className = 'bg-white p-6 rounded shadow hover:scale-105 transition text-center';
+        div.innerHTML = `
+          <img src="${drink.img}" alt="${drink.name}" class="rounded mb-4 w-full h-48 object-cover">
+          <h3 class="text-2xl font-bold">${drink.name}</h3>
+          <p class="text-lg mb-2">$${drink.price}</p>
+          <button onclick='placeOrder("${drink.name}", ${drink.price})' class="mt-2 bg-yellow-300 px-4 py-2 rounded-full hover:bg-yellow-400">Select</button>
+        `;
+        menuContainer.appendChild(div);
+      });
+      showPage('menu');
+    }
+
+    function placeOrder(name, price) {
+      selectedDrink = { name, price };
+      document.getElementById('orderDetails').textContent = `You ordered: ${name} - $${price}`;
+      showPage('summary');
+    }
+  </script>
+</body>
+</html>
